@@ -15,3 +15,8 @@ def sendStatic(path):
 def index():
     """Send index page"""
     return flask.render_template("index.html")
+
+
+if "__main__" == __name__:
+    import database
+    db = database.database("../data/")

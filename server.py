@@ -21,7 +21,7 @@ for arg, var, default in [
 from scripts.database import database
 db = database(argv["dataDir"])
 db.executeScript("databaseStructure.sql")
-
+ 
 # Set up flask
 gamelist = flask.Flask(__name__)
 gamelist.url_map.strict_slashes = False

@@ -4,10 +4,15 @@ CREATE TABLE IF NOT EXISTS userRoles (
     PRIMARY KEY (roleID AUTOINCREMENT)
 );
 
+INSERT OR IGNORE INTO userRoles (roleID, role) VALUES
+    (1, "admin"),
+    (2, "user"),
+    (3, "banned");
+
 CREATE TABLE IF NOT EXISTS users (
     userID          INTEGER NOT NULL,
     roleID          INTEGER NOT NULL,
-    username        VARCHAR(16) NOT NULL,
+    username        VARCHAR(16) UNIQUE NOT NULL,
     passwordHash    VARCHAR(60) NOT NULL,
     email           VARCHAR(256) NOT NULL,
     dateOfBirth     DATE NOT NULL,

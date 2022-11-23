@@ -28,6 +28,7 @@ gamelist.url_map.strict_slashes = False
 import scripts.routes
 scripts.routes.db = db
 gamelist.register_blueprint(scripts.routes.gamelist)
+gamelist.config["TEMPLATES_AUTO_RELOAD"] = True
 
 @gamelist.after_request
 def afterRequest(response):

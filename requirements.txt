@@ -1,0 +1,4 @@
+Flask>=2.2.2
+profanity>=1.1
+python_bcrypt>=0.3.2
+waitress>=2.1.2

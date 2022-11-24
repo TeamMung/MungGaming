@@ -17,7 +17,9 @@ Team Mung's Game List Website.
 
 To start the server run:
 
-`./server.py`
+`./server.py` on linux or `python server.py` on windows
+
+To stop the server send a KeyboardInterrupt signal (ctrl + C).
 
 The default host is `0.0.0.0` and port is `80` and you can change it with the `--host` and `-port`:
 
@@ -31,13 +33,15 @@ By default waitress will be used as the WSGI if it is installed and will use wer
 
 `./server.py --werkzeug`
 
-To stop the server send a KeyboardInterrupt signal (ctrl + C).
+And to run the unit tests run:
+
+`python3 -m unittest discover testing`
 
 ## Dependencies
 
-- Python 3.7+
-- Flask
-- Waitress (optional; werkzeug will be used if not installed)
+Python 3.7+, all packages are listed in `requirements.txt`
+
+To install them all, run `python3 -m pip install -r requirements.txt`
 
 ## Misc
 

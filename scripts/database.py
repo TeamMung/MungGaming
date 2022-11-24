@@ -5,11 +5,12 @@ import os
 import sqlite3
 
 class database:
-    def __init__(self, directory="data"):
+    def __init__(self, directory, validator):
         """Set up database."""
         self.directory = directory
         self.filename = os.path.join(self.directory, "database.db")
         os.makedirs(self.directory, exist_ok=True)
+        self.validator = validator(self)
 
     def connect(self):
         """Access the database."""
@@ -53,7 +54,7 @@ class database:
         con.commit()
         con.close()
 
-    def getUser(self, username):
+    def getUserByUsername(self, username):
         """Get a user from the database.
         Returns a dictionary of the user's details,
         or None if the user does not exist.
@@ -71,7 +72,7 @@ class database:
                 userRoles.role \
             FROM users \
             INNER JOIN userRoles ON users.roleID = userRoles.roleID \
-            WHERE users.username = ?", (username,))
+            WHERE LOWER(users.username) = ?", (username.lower(),))
         user = cur.fetchone()
         con.close()
         try:
@@ -93,7 +94,7 @@ class database:
         Keyword arguments:
         username -- the username of the user to check
         password -- the password to check"""
-        user = self.getUser(username)
+        user = self.getUserByUsername(username)
         if user is None:
             return False
         password = password.encode("utf-8")
@@ -110,11 +111,12 @@ class database:
         cur.execute(
             "UPDATE users SET roleID = (\
                 (SELECT roleID from userRoles WHERE role = ?) \
-            ) WHERE username = ?", (role, username))
+            ) WHERE LOWER(username) = ?", (role, username.lower()))
         con.commit()
         con.close()
 
 
 if __name__ == "__main__":
-    db = database(os.path.join(os.path.dirname(__file__), "../data/"))
+    from validator import validator
+    db = database(os.path.join(os.path.dirname(__file__), "../data/"), validator)
     db.executeScript("databaseStructure.sql")

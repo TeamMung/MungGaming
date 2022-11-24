@@ -19,16 +19,21 @@ for arg, var, default in [
 
 # Set up database
 from scripts.database import database
-db = database(argv["dataDir"])
+from scripts.validator import validator
+db = database(argv["dataDir"], validator)
 db.executeScript("databaseStructure.sql")
  
 # Set up flask
 gamelist = flask.Flask(__name__)
 gamelist.url_map.strict_slashes = False
+gamelist.config["TEMPLATES_AUTO_RELOAD"] = True
+gamelist.config["SESSION_PERMANENT"] = False
+gamelist.config["SESSION_TYPE"] = "filesystem"
+gamelist.secret_key = os.urandom(32)
+
 import scripts.routes
 scripts.routes.db = db
 gamelist.register_blueprint(scripts.routes.gamelist)
-gamelist.config["TEMPLATES_AUTO_RELOAD"] = True
 
 @gamelist.after_request
 def afterRequest(response):

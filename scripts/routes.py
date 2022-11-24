@@ -49,4 +49,5 @@ def register():
 
 if "__main__" == __name__:
     import database
-    db = database.database("../data/")
+    import validator
+    db = database.database("../data/", validator.validator)

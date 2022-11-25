@@ -1,51 +1,31 @@
+<!DOCTYPE html>
 <html>
 
-    <head>
+<head>
+    <title>Register</title>
+    {% include("head.html") %}
+</head>
 
-        
-        <link rel="stylesheet" href="./static/styles/style.css">
-        <title>Register</title>
-            
-        </head>   
-
-        <body>
-
-            <nav>
-            <h1> Mung Gaming </h1>  
-             <img src= "evil%20mung.png" alt= "Mung Gaming Logo" width="80" height="80">
-                 <br> <br>
-             <a href="user.html">USER</a>
-             <a href="games.html">GAMES</a>
-             <a href="lists.html">LISTS</a>
-             <a href="profile.html">PROFILE</a>
-             <button type="button" class="button" onclick="alert('im gonna crash your pc')">Log out</button>
-         
-             </nav>
-             
-
-            
-             <div class="formBox">
-            <form method="POST">
-             <h1>Register</h1>
-             <label for="username">Username</label><br>
-             <input type="text" placeholder="username" id="username" name="username"><br>
-             <label for="password">Password</label><br>
-             <input type="text" placeholder="password" id="password" name="password"><br>
-             <label for="email">E-mail</label><br>
-             <input type="text" placeholder="emial" id="email" name="email"><br>
-             <label for="dob">Date of birth</label><br>
-             <input type="date" value="22-07-2003" min="01-01-1800"  max="23-11-2022" id="dob" name="dob"><br>
-             <!-- fix later -->
-             <label for="phonenumber">Phone number</label><br>
-             <input type="text" placeholder="Phone number" id="phonenumber" name="phonenumber" maxlength="11"><br>
-             <input type="submit" value="Register" name="register">
-            </form>
-             </div>
-            
-
-             
-        
-        </body>
-
+<body>
+    {% include("nav.html") %}
+    
+    <div class="formBox">
+        <form method="POST">
+            <h1>Register</h1>
+            <label for="username">Username</label><br>
+            <input type="text" placeholder="username" id="username" name="username"><br>
+            <label for="password">Password</label><br>
+            <input type="text" placeholder="password" id="password" name="password"><br>
+            <label for="email">E-mail</label><br>
+            <input type="text" placeholder="emial" id="email" name="email"><br>
+            <label for="dob">Date of birth</label><br>
+            <input type="date" value="22-07-2003" min="01-01-1800" max="23-11-2022" id="dob" name="dob"><br>
+            <!-- fix later -->
+            <label for="phonenumber">Phone number</label><br>
+            <input type="text" placeholder="Phone number" id="phonenumber" name="phonenumber" maxlength="11"><br>
+            <input type="submit" value="Register" name="register">
+        </form>
+    </div>
+</body>
 
 </html>

@@ -1,45 +1,24 @@
+<!DOCTYPE html>
 <html>
 
-    <head>
+<head>
+    <title>Log-in</title>
+    {% include("head.html") %}
+</head>
 
-        
-
-        <link rel="stylesheet" href="style.css">
-        <title>Log-in</title>
-            
-        </head>   
-
-        <body>
-
-            <nav>
-            <h1> Mung Gaming </h1>  
-             <img src= "evil%20mung.png" alt= "Mung Gaming Logo" width="80" height="80">
-                 <br> <br>
-             <a href="user.html">USER</a>
-             <a href="games.html">GAMES</a>
-             <a href="lists.html">LISTS</a>
-             <a href="profile.html">PROFILE</a>
-             <button type="button" class="button" onclick="alert('im gonna crash your pc')">Log out</button>
-         
-             </nav>
-             
-
-            
-             <div class="formBox">
-            <form method="POST">
-             <h1>Log-in</h1>
-             <label for="username">Username</label><br>
-             <input type="text" placeholder="username" id="username" name="username"><br>
-             <label for="password">Password</label><br>
-             <input type="text" placeholder="password" id="password" name="password"><br>
-             <input type="submit" value="Log-in">
-            </form>
-             </div>
-            
-
-             
-        
-        </body>
-
+<body>
+    {% include("nav.html") %}
+    
+    <div class="formBox">
+        <form method="POST">
+            <h1>Log-in</h1>
+            <label for="username">Username</label><br>
+            <input type="text" placeholder="username" id="username" name="username"><br>
+            <label for="password">Password</label><br>
+            <input type="text" placeholder="password" id="password" name="password"><br>
+            <input type="submit" value="Log-in">
+        </form>
+    </div>
+</body>
 
 </html>

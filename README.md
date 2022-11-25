@@ -15,7 +15,7 @@ Team Mung's Game List Website.
 
 ## Usage
 
-To start the server run:
+To start the server, install the [dependencies](#dependencies), then run:
 
 `./server.py` on linux or `python server.py` on windows
 

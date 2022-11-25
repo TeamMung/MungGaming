@@ -14,9 +14,9 @@ CREATE TABLE IF NOT EXISTS users (
     roleID          INTEGER NOT NULL,
     username        VARCHAR(16) UNIQUE NOT NULL,
     passwordHash    VARCHAR(60) NOT NULL,
-    email           VARCHAR(256) NOT NULL,
+    email           VARCHAR(256) UNIQUE NOT NULL,
     dateOfBirth     DATE NOT NULL,
-    phoneNumber     VARCHAR(16) NOT NULL,
+    phoneNumber     VARCHAR(20) NOT NULL,
     PRIMARY KEY (userID AUTOINCREMENT),
     FOREIGN KEY (roleID) REFERENCES userRoles(roleID)
 );

@@ -54,13 +54,13 @@ class database:
         con.commit()
         con.close()
 
-    def getUserByUsername(self, username):
+
+    def getUser(self, where, value):
         """Get a user from the database.
         Returns a dictionary of the user's details,
         or None if the user does not exist.
-        
-        Keyword arguments:
-        username -- the username of the user to get"""
+        Used by getUserByUsername and getUserByEmail to avoid code duplication.
+        Do not use this function directly."""
         con, cur = self.connect()
         cur.execute(
             "SELECT \
@@ -72,7 +72,7 @@ class database:
                 userRoles.role \
             FROM users \
             INNER JOIN userRoles ON users.roleID = userRoles.roleID \
-            WHERE LOWER(users.username) = ?", (username.lower(),))
+            WHERE LOWER(users." + where + ") = ?", (value.lower(),))
         user = cur.fetchone()
         con.close()
         try:
@@ -86,6 +86,20 @@ class database:
             }
         except TypeError:
             return None
+
+    def getUserByUsername(self, username):
+        """Get a user from the database by their username.
+
+        Keyword arguments:
+        username -- the username of the user to get"""
+        return self.getUser("username", username)
+
+    def getUserByEmail(self, email):
+        """Get a user from the database by their email.
+
+        Keyword arguments:
+        email -- the email of the user to get"""
+        return self.getUser("email", email)
 
     def checkPassword(self, username, password):
         """Check if a password is correct for a user.

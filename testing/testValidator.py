@@ -4,66 +4,159 @@ from scripts.validator import validator
 from scripts.database  import database
 from testing.utils     import baseTests
 
+import datetime
 import unittest
 
 
 class validatorTests(baseTests):
-    """Set up the validator tests"""
+    """Methods used by multiple tests"""
 
     def setUp(self):
         """Set up the validator tests"""
         super().setUp()
         self.db = database(self.tempDataDir, validator)
         self.validator = self.db.validator
+
+    def length(self, message, valid, invalid, requiredChars=""):
+        """Test two arrays of valid and invalid lengths"""
+        for length in valid:
+            self.assertEqual(self.method(requiredChars + "a" * length), (True, None))
+        for length in invalid:
+            self.assertEqual(self.method(requiredChars + "a" * length), (False, message))
+    
+    def validInvalid(self, message, valid, invalid):
+        """Test two arrays of valid and invalid values"""
+        for value in valid:
+            self.assertEqual(self.method(value), (True, None))
+        for value in invalid:
+            self.assertEqual(self.method(value), (False, message))
+
+    def doesntExist(self, message, value1, value2, addUser):
+        """Test method, add value to database, then test method again"""
+        self.assertEqual(self.method(value1), (True, None))
+        self.assertEqual(self.method(value2), (True, None))
+        self.db.addUser(*addUser)
+        self.assertEqual(self.method(value1), (False, message))
+        self.assertEqual(self.method(value2), (True, None))
         
 
 class usernameTests(validatorTests):
     """Test the username method"""
 
     def setUp(self):
-        """Create database tables"""
         super().setUp()
         self.db.executeScript("databaseStructure.sql")
-
-    def validInvalid(self, valid, invalid, message):
-        """Test two arrays of valid and invalid usernames"""
-        for username in valid:
-            self.assertEqual(self.validator.username(username), (True, None))
-        for username in invalid:
-            self.assertEqual(self.validator.username(username), (False, message))
+        self.method = self.validator.username
     
     def testLength(self):
         """Test the length of the username"""
-        message = "Username must be between 3 and 16 characters long"
-        for i in (*range(0, 3), 17, 20, 128):
-            self.assertEqual(self.validator.username("a" * i), (False, message))
-        for i in range(3, 17):
-            self.assertEqual(self.validator.username("a" * i), (True, None))
+        self.length("Username must be between 3 and 16 characters long",
+            range(3, 17), (*range(0, 3), 17, 20, 128))
     
     def testAlphaNumeric(self):
         """Test the username for alpha-numeric characters"""
-        valid = ["JoeMung", "bigfloppa", "big_chungus_sus", "Amogus1337", "poggers"]
-        invalid = ["Bruh Hi", "#floppa", "among us 𐐘", "💀💀💀💀💀💀", "👁👄👁"]
-        message = "Username must be alphanumeric"
-        self.validInvalid(valid, invalid, message)
+        self.validInvalid("Username must be alphanumeric",
+            ["JoeMung", "bigfloppa", "big_chungus_sus", "Amogus1337", "poggers"], 
+            ["Bruh Hi", "#floppa", "among us 𐐘", "💀💀💀💀💀💀", "👁👄👁"])
     
     def testProfanity(self):
         """Test if the username contains profanity"""
-        valid = ["Munger", "CHUNGUS", "bruh"]
-        invalid = ["shit", "you_fucking_mung", "faggot"]
-        message = "Username contains profanity"
-        self.validInvalid(valid, invalid, message)
+        self.validInvalid("Username contains profanity",
+            ["Munger", "CHUNGUS", "bruh"],
+            ["shit", "you_fucking_mung", "faggot"])
 
     def testDoesntExist(self):
         """Add user to database and test if username exists"""
-        print("hi")
-        self.assertEqual(self.validator.username("test1"), (True, None))
-        self.assertEqual(self.validator.username("test2"), (True, None))
-        
-        self.db.addUser("test1", "Mung", "test@example.com", "20/04/1987", "07123456789")
+        self.doesntExist("Username already exists", "test1", "test2",
+            ("test1", "Mung", "test@example.com", "14/11/1987", "07123456789"))
 
-        self.assertEqual(self.validator.username("test1"), (False, "Username already exists"))
-        self.assertEqual(self.validator.username("test2"), (True, None))
+
+class passwordTests(validatorTests):
+    """Test the password validator method"""
+
+    def setUp(self):
+        super().setUp()
+        self.method = self.validator.password
+
+    def testLength(self):
+        """Test the length of the password"""
+        self.length("Password must be between 8 and 64 characters long",
+            range(4, 61), (*range(0, 4), 61, 62, 69, 85, 128), "aA1#")
+    
+    def testRequiredChars(self):
+        """Test the password for required characters"""
+        self.validInvalid("Password must contain at least one uppercase and lowercase letter, one number, and one special character",
+            ["Pas55w0rd!", "AmOnGUs1337!", "Mun9er!!", "Password123!", "WhyDidYouKillBigChungus???WeKnowYoureTheImposter!11!!", "Gnk*99vjauwd!$A@"],
+            ["pa55w0rd!", "HELLO:FLOPPAWAVE~2:", "#AmongUs", "Password123"])
+
+    
+class emailTests(validatorTests):
+    """Test the email validator method"""
+
+    def setUp(self):
+        super().setUp()
+        self.db.executeScript("databaseStructure.sql")
+        self.method = self.validator.email
+
+    def testValid(self):
+        """Test email against some examples"""
+        self.validInvalid("Email is invalid",
+            ["example@gmail.com", "amon.gus@google.com", "s5411045@bournemouth.ac.uk", "amongus+sus@bing.com", "telly-license@gov.uk"],
+            ["@example.com", "amongus.com", "chungus@", "hello@hicom", "email@exampe.com (sus)", "Big Chungus <email@example.com>", ".email@example.com"])
+
+    def testDoesntExist(self):
+        """Add user to database and test if username exists"""
+        self.doesntExist("Email has already been used",
+            "test1@example.com", "test2@example.com",
+            ("test1", "Mung", "test1@example.com", "14/11/1987", "07123456789"))
+
+
+class dateOfBirthTests(validatorTests):
+    """Test the date of birth validator method"""
+
+    def setUp(self):
+        super().setUp()
+        self.method = self.validator.dateOfBirth
+
+    def testValidFormat(self):
+        """Test date of birth format"""
+        self.validInvalid("Date of birth must be in DD/MM/YYYY format",
+            ["23/07/2003", "19/04/1994", "14/11/1987", "07/06/1954", "23/06/1912", "01/01/2000", "31/12/2000"],
+            ["23/7/2003",  "1994-04-19", "11/14/1987", "07/06/54",   "23/6/12",    "1 1 2000",   "31st December 2000", 
+             "23/07/2003 16:06:00", "23/07/12003", "2003/07/23", "23-07-2003"])
+    
+    def testValidAge(self):
+        """Test date of birth age"""
+        dateYearsAgo = lambda year: (datetime.date.today() - datetime.timedelta(days=year*365.25)).strftime("%d/%m/%Y")
+        self.validInvalid("You must be at least 13 years old to use this service",
+            [dateYearsAgo(13),  dateYearsAgo(13.5), dateYearsAgo(14), dateYearsAgo(18),  dateYearsAgo(20),
+             dateYearsAgo(50),  dateYearsAgo(75),   dateYearsAgo(99), dateYearsAgo(100), dateYearsAgo(101)],
+            [dateYearsAgo(0),   dateYearsAgo(3),    dateYearsAgo(9),  dateYearsAgo(12),  dateYearsAgo(12.5)])
+        # Assumes that date is in wrong format if it is in the future or older than 150 years old
+        self.validInvalid("Date of birth must be in DD/MM/YYYY format", [],
+            [dateYearsAgo(-1), dateYearsAgo(-2),  dateYearsAgo(-5),  dateYearsAgo(-10), dateYearsAgo(-200),
+            dateYearsAgo(150), dateYearsAgo(200), dateYearsAgo(500), dateYearsAgo(750)])
+
+
+class phoneNumberTests(validatorTests):
+    """Test the phone number validator method"""
+
+    def setUp(self):
+        super().setUp()
+        self.method = self.validator.phoneNumber
+
+    def testLocal(self):
+        """Test phone number no area code"""
+        self.validInvalid("Phone number is invalid",
+            ["07123456789", "07987654321", "07777777777", "07888888888", "07444444444", "07555555555", "07123-456-789", "07123 456 789"],
+            ["0712345678", "071234567890", "0712345678a", "0712345678!", "0712345678#", "0712345678 ", "07123-456-78", "07000---000"])
+    
+    def testAreaCode(self):
+        """Test phone number with area code"""
+        self.validInvalid("Phone number is invalid",
+            ["+447123456789", "+447987654321", "+447777777777", "+447888888888", "(+44)7123-456-789", "+44 07123-456-789", "+44 7123-456-789", "+447123 456 789"],
+            ["+44712345678", "+44071234567890", "+44712345678a", "+44712345678!", "+44712345678#", "+44712345678 ", "+447123-456-78", "+44700666"])
+
 
 if __name__ == "__main__":
     unittest.main()

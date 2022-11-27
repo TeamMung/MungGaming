@@ -46,11 +46,11 @@ class validator:
 
     def dateOfBirth(self, dateOfBirth):
         """Check if a date of birth is:
-        in DD/MM/YYYY format
+        in YYYY-MM-DD format
         and is over 13 years old and under 150 years old"""
-        if re.match("^\d\d/\d\d/\d\d\d\d$", dateOfBirth):
+        if re.match("^\d\d\d\d-\d\d-\d\d$", dateOfBirth):
             try:
-                date = datetime.datetime.strptime(dateOfBirth, "%d/%m/%Y")
+                date = datetime.datetime.strptime(dateOfBirth, "%Y-%m-%d")
                 if (date > (datetime.datetime.now() - datetime.timedelta(days=365.25*13)).replace(hour=0, minute=0, second=0, microsecond=0)
                     and date < datetime.datetime.now()):
                     return False, "You must be at least 13 years old to use this service"
@@ -59,7 +59,7 @@ class validator:
                     return True, None
             except ValueError:
                 pass
-        return False, "Date of birth must be in DD/MM/YYYY format"
+        return False, "Date of birth must be in YYYY-MM-DD format"
 
     def phoneNumber(self, phoneNumber):
         """Check if a phone number is valid."""

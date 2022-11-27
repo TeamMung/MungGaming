@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 
 import flask
-from flask import Flask, session
-#from flask.ext.session import Session
 
 gamelist = flask.Blueprint("gamelist", __name__, template_folder="templates")
 
@@ -36,11 +34,8 @@ def loginPost():
         return flask.render_template("login.html",
         passwordValid=passwordValid)
     
-    
-    session['username'] = username
-    return flask.render_template("allGames.html")
-
-
+    flask.session['username'] = username
+    return flask.redirect(flask.url_for("gamelist.allGames"))
 
 
 @gamelist.route("/register", endpoint="registerGet", methods=["GET"])
@@ -71,7 +66,7 @@ def register():
 
     db.addUser(username, password, email, dob, phonenumber)
 
-    return flask.render_template("login.html", username=username)
+    return flask.redirect(flask.url_for("gamelist.loginGet"))
 
 
 @gamelist.route("/logout", endpoint="logout", methods=["GET"])

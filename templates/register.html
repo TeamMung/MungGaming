@@ -17,7 +17,7 @@
             <label for="password">Password</label><br>
             <input type="text" placeholder="password" id="password" name="password"><br>
             <label for="email">E-mail</label><br>
-            <input type="text" placeholder="emial" id="email" name="email"><br>
+            <input type="text" placeholder="email" id="email" name="email"><br>
             <label for="dob">Date of birth</label><br>
             <input type="date" value="22-07-2003" min="01-01-1800" max="23-11-2022" id="dob" name="dob"><br>
             <!-- fix later -->
@@ -25,6 +25,13 @@
             <input type="text" placeholder="Phone number" id="phonenumber" name="phonenumber" maxlength="11"><br>
             <input type="submit" value="Register" name="register">
         </form>
+
+        {% if error %}
+        <h1 class="error">{{ error }}</h1>
+        {% endif %}
+
+
+
     </div>
 </body>
 

@@ -44,14 +44,35 @@ def register():
 def register():
     """User tries to register"""
     username = flask.request.form['username']
+    #validate username
+    validated, error = db.validator.username(username)
+    if (validated == False):
+        return flask.render_template("register.html", validated=validated, error=error)
     password = flask.request.form['password']
+    #validate password
+    validated, error = db.validator.password(password)
+    if (validated == False):
+        return flask.render_template("register.html", validated=validated, error=error)
     email = flask.request.form['email']
+    #validate email
+    validated, error = db.validator.email(email)
+    if (validated == False):
+        return flask.render_template("register.html", validated=validated, error=error)
     dob = flask.request.form['dob']
+    #validate dob
+    validated, error = db.validator.dateOfBirth(dob)
+    if (validated == False):
+        return flask.render_template("register.html", validated=validated, error=error)
     phonenumber = flask.request.form['phonenumber']
+    #validate phone number
+    validated, error = db.validator.phoneNumber(phonenumber)
+    if (validated == False):
+        return flask.render_template("register.html", validated=validated, error=error)
 
     db.addUser(username, password, email, dob, phonenumber)
 
-    return flask.render_template("register.html")
+    return flask.render_template("login.html", username=username)
+    #return flask.render_template("login.html")
 
 
 @gamelist.route("/logout", endpoint="logout", methods=["GET"])

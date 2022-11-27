@@ -120,20 +120,20 @@ class dateOfBirthTests(validatorTests):
 
     def testValidFormat(self):
         """Test date of birth format"""
-        self.validInvalid("Date of birth must be in DD/MM/YYYY format",
-            ["23/07/2003", "19/04/1994", "14/11/1987", "07/06/1954", "23/06/1912", "01/01/2000", "31/12/2000"],
-            ["23/7/2003",  "1994-04-19", "11/14/1987", "07/06/54",   "23/6/12",    "1 1 2000",   "31st December 2000", 
-             "23/07/2003 16:06:00", "23/07/12003", "2003/07/23", "23-07-2003"])
+        self.validInvalid("Date of birth must be in YYYY-MM-DD format",
+            ["2003-07-23", "1994-04-19", "1987-11-14", "1954-06-07", "1912-06-23", "2000-01-01", "2000-12-31"],
+            ["2003-7-23", "19/04/1994", "1987-14-11", "54-06-07", "12-06-23", "2000 1 1", "31st December 2000",
+             "2003-07-23 16:06:00", "12003-07-23", "23072003", "2003/07/23"])
     
     def testValidAge(self):
         """Test date of birth age"""
-        dateYearsAgo = lambda year: (datetime.date.today() - datetime.timedelta(days=year*365.25)).strftime("%d/%m/%Y")
+        dateYearsAgo = lambda year: (datetime.date.today() - datetime.timedelta(days=year*365.25)).strftime("%Y-%m-%d")
         self.validInvalid("You must be at least 13 years old to use this service",
             [dateYearsAgo(13),  dateYearsAgo(13.5), dateYearsAgo(14), dateYearsAgo(18),  dateYearsAgo(20),
              dateYearsAgo(50),  dateYearsAgo(75),   dateYearsAgo(99), dateYearsAgo(100), dateYearsAgo(101)],
             [dateYearsAgo(0),   dateYearsAgo(3),    dateYearsAgo(9),  dateYearsAgo(12),  dateYearsAgo(12.5)])
         # Assumes that date is in wrong format if it is in the future or older than 150 years old
-        self.validInvalid("Date of birth must be in DD/MM/YYYY format", [],
+        self.validInvalid("Date of birth must be in YYYY-MM-DD format", [],
             [dateYearsAgo(-1), dateYearsAgo(-2),  dateYearsAgo(-5),  dateYearsAgo(-10), dateYearsAgo(-200),
             dateYearsAgo(150), dateYearsAgo(200), dateYearsAgo(500), dateYearsAgo(750)])
 

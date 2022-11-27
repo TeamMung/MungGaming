@@ -13,16 +13,16 @@
         <form method="POST">
             <h1>Register</h1>
             <label for="username">Username</label><br>
-            <input type="text" placeholder="username" id="username" name="username"><br>
+            <input type="text" placeholder="username" id="username" name="username" {% if username %} value="{{ username }}" {% endif %}><br>
             <label for="password">Password</label><br>
-            <input type="text" placeholder="password" id="password" name="password"><br>
+            <input type="password" placeholder="password" id="password" name="password" {% if password %} value="{{ password }}" {% endif %}><br>
             <label for="email">E-mail</label><br>
-            <input type="text" placeholder="email" id="email" name="email"><br>
+            <input type="text" placeholder="email" id="email" name="email" {% if email %} value="{{ email }}" {% endif %}><br>
             <label for="dob">Date of birth</label><br>
-            <input type="date" value="22-07-2003" min="01-01-1800" max="23-11-2022" id="dob" name="dob"><br>
+            <input type="date" min="1800-01-01" max="2050-01-01" id="dob" name="dob" {% if dob %} value="{{ dob }}" {% endif %}><br>
             <!-- fix later -->
             <label for="phonenumber">Phone number</label><br>
-            <input type="text" placeholder="Phone number" id="phonenumber" name="phonenumber" maxlength="11"><br>
+            <input type="text" placeholder="Phone number" id="phonenumber" name="phonenumber" maxlength="16" {% if phonenumber %} value="{{ phonenumber }}" {% endif %}><br>
             <input type="submit" value="Register" name="register">
         </form>
 

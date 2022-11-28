@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS gameListLink (
 
 CREATE TABLE IF NOT EXISTS gameGenres (
     genreID         INTEGER NOT NULL,
-    genre           VARCHAR(32) NOT NULL,
+    genre           VARCHAR(32) UNIQUE NOT NULL,
     PRIMARY KEY (genreID AUTOINCREMENT)
 );
 
@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS gameGenresLink (
 
 CREATE TABLE IF NOT EXISTS gamePublishers (
     publisherID     INTEGER NOT NULL,
-    publisherName   VARCHAR(64) NOT NULL,
+    publisherName   VARCHAR(64) UNIQUE NOT NULL,
     PRIMARY KEY (publisherID AUTOINCREMENT)
 );  
 

@@ -141,6 +141,171 @@ class database:
         con.commit()
         con.close()
 
+    def addGame(self, name, description, releaseDate, genres, publishers):
+        """Add a game to the database.
+        Will not add genres or publishers that do not already exist.
+        
+        Keyword arguments:
+        name        -- the name of the game
+        description -- the description of the game
+        releaseDate -- the release date of the game
+        genres      -- an array of the genres of the game
+        publishers  -- an array of developers and publishers of the game"""
+        con, cur = self.connect()
+        cur.execute(
+            "INSERT INTO games (gameName, gameDescription, releaseDate, approved) VALUES (?, ?, ?, 0)",
+            (name, description, releaseDate))
+        gameID = cur.lastrowid
+        for genre in genres:
+            cur.execute("SELECT genreID from gameGenres WHERE LOWER(genre) = ?", (genre.lower(),))
+            genreID = cur.fetchone()
+            if genreID is not None:
+                genreID = genreID[0]
+                cur.execute("INSERT INTO gameGenresLink (gameID, genreID) VALUES (?, ?)", (gameID, genreID))
+        for publisher in publishers:
+            cur.execute("SELECT publisherID from gamePublishers WHERE LOWER(publisherName) = ?", (publisher.lower(),))
+            publisherID = cur.fetchone()
+            if publisherID is not None:
+                publisherID = publisherID[0]
+                cur.execute("INSERT INTO gamePublishersLink (gameID, publisherID) VALUES (?, ?)", (gameID, publisherID))
+        con.commit()
+        con.close()
+
+    def unConcat(self, string):
+        """Split group_concat into an array.
+        
+        Keyword arguments:
+        string -- the string to remove the trailing comma from"""
+        if string is None:
+            return []
+        return string.split(",")
+
+    def getGame(self, where, value):
+        """Get a game from the database.
+        Will have arrays of genres and publishers/developers.
+        Use getGameByName or getGameByID instead of this function.
+
+        Keyword arguments:
+        where -- what to get the game by
+        value -- the value to get the game by"""
+        con, cur = self.connect()
+        cur.execute(
+            "SELECT \
+                games.gameID, \
+                games.approved, \
+                games.gameName, \
+                games.gameDescription, \
+                games.releaseDate, \
+                GROUP_CONCAT(DISTINCT g.genre), \
+                GROUP_CONCAT(DISTINCT p.publisherName) \
+            FROM games \
+            LEFT OUTER JOIN gameGenresLink gl     ON games.gameID = gl.gameID \
+            LEFT OUTER JOIN gameGenres g          ON gl.genreID = g.genreID \
+            LEFT OUTER JOIN gamePublishersLink pl ON games.gameID = pl.gameID \
+            LEFT OUTER JOIN gamePublishers p      ON pl.publisherID = p.publisherID \
+            WHERE " + where + " = ? ", (value,))
+        game = cur.fetchone()
+        con.close()
+        if game[0] is not None:
+            return {
+                "gameID":       game[0],
+                "approved":     bool(game[1]),
+                "name":         game[2],
+                "description":  game[3],
+                "releaseDate":  game[4],
+                "genres":       self.unConcat(game[5]),
+                "developers":   self.unConcat(game[6])
+            }
+        return None
+
+    def getGameByName(self, name):
+        """Get a game from the database by its name.
+        Will have arrays of genres and publishers/developers.
+        
+        Keyword arguments:
+        name -- the name of the game to get"""
+        return self.getGame("LOWER(games.gameName)", name.lower())
+
+    def getGameByID(self, gameID):
+        """Get a game from the database by its ID.
+        Will have arrays of genres and publishers/developers.
+        
+        Keyword arguments:
+        gameID -- the ID of the game to get"""
+        return self.getGame("games.gameID", gameID)
+
+    def deleteGameByID(self, id):
+        """Delete a game from the database by its name.
+        
+        Keyword arguments:
+        id -- the id of the game to delete"""
+        con, cur = self.connect()
+        cur.execute(
+            "DELETE FROM games WHERE gameID = ?", (id,))
+        con.commit()
+        con.close()
+
+    def addGenre(self, genre):
+        """Add a genre to the database.
+        
+        Keyword arguments:
+        genre -- the genre to add"""
+        con, cur = self.connect()
+        cur.execute(
+            "INSERT INTO gameGenres (genre) VALUES (?)", (genre,))
+        con.commit()
+        con.close()
+
+    def addPublisher(self, publisher):
+        """Add a publisher to the database.
+        
+        Keyword arguments:
+        publisher -- the publisher to add"""
+        con, cur = self.connect()
+        cur.execute(
+            "INSERT INTO gamePublishers (publisherName) VALUES (?)", (publisher,))
+        con.commit()
+        con.close()
+
+    def getGenres(self):
+        """Get all genres from the database."""
+        con, cur = self.connect()
+        cur.execute(
+            "SELECT genre FROM gameGenres")
+        genres = cur.fetchall()
+        con.close()
+        return [genre[0] for genre in genres]
+
+    def getPublishers(self):
+        """Get all publishers from the database."""
+        con, cur = self.connect()
+        cur.execute(
+            "SELECT publisherName FROM gamePublishers")
+        publishers = cur.fetchall()
+        con.close()
+        return [publisher[0] for publisher in publishers]
+
+    def deleteGenre(self, genre):
+        """Delete a genre from the database.
+        
+        Keyword arguments:
+        genre -- the genre to delete"""
+        con, cur = self.connect()
+        cur.execute(
+            "DELETE FROM gameGenres WHERE genre = ?", (genre,))
+        con.commit()
+        con.close()
+
+    def deletePublisher(self, publisher):
+        """Delete a publisher from the database.
+        
+        Keyword arguments:
+        publisher -- the publisher to delete"""
+        con, cur = self.connect()
+        cur.execute(
+            "DELETE FROM gamePublishers WHERE publisherName = ?", (publisher,))
+        con.commit()
+        con.close()
 
 if __name__ == "__main__":
     from validator import validator

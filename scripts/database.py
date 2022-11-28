@@ -30,6 +30,18 @@ class database:
         con.commit()
         con.close()
 
+    def executeQuery(self, query, params):
+        """Execute a query and return the result.
+        
+        Keyword arguments:
+        query  -- the query to execute
+        params -- the parameters to pass to the query"""
+        con, cur = self.connect()
+        cur.execute(query, params)
+        results = cur.fetchall()
+        con.close()
+        return results
+
     def addUser(self, username, password, email, dateOfBirth, phoneNumber):
         """Add a user to the database.
         

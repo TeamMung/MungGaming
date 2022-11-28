@@ -135,7 +135,7 @@ class dateOfBirthTests(validatorTests):
         # Assumes that date is in wrong format if it is in the future or older than 150 years old
         self.validInvalid("Date of birth must be in YYYY-MM-DD format", [],
             [dateYearsAgo(-1), dateYearsAgo(-2),  dateYearsAgo(-5),  dateYearsAgo(-10), dateYearsAgo(-200),
-            dateYearsAgo(150), dateYearsAgo(200), dateYearsAgo(500), dateYearsAgo(750)])
+            dateYearsAgo(151), dateYearsAgo(200), dateYearsAgo(500), dateYearsAgo(750)])
 
 
 class phoneNumberTests(validatorTests):

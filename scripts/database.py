@@ -9,7 +9,7 @@ class database:
         """Set up database."""
         self.directory = directory
         self.filename = os.path.join(self.directory, "database.db")
-        os.makedirs(self.directory, exist_ok=True)
+        os.makedirs(os.path.join(self.directory, "images/pfp"), exist_ok=True)
         self.validator = validator(self)
 
     def connect(self):

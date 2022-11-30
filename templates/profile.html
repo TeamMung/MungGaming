@@ -16,6 +16,14 @@
     <div id="welcome">
         <h2> Epic profile</h2>
     </div>
+
+    <img id="profilePicture" src="/images/profile/{{ session['username'] }}.png" alt="Profile Picture">
+
+    <div id="uploadProfilePicture">
+        <p>Upload a profile picture</p>
+        <input type="file" name="profilePictureInput" id="profilePictureInput">
+        <script src="/static/scripts/uploadProfilePicture.js"></script>
+    </div>
 </body>
 
 </html>

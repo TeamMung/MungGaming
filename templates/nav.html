@@ -3,10 +3,10 @@
     <img src="/static/images/evil%20mung.png" alt="Mung Gaming Logo" width="80" height="80">
     <br> <br>
     {% if session['username'] %}
-    <a href="/user">{{ session['username'] }}</a>
+    <a href="/user">USERS</a>
     <a href="/games">GAMES</a>
     <a href="/lists">LISTS</a>
-    <a href="/profile">PROFILE</a>
+    <a href="/profile">{{ session['username'] }}</a>
     <a href="/logout">Log Out</a>
     {% endif %}
 </nav>

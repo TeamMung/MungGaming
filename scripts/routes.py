@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
 import flask
+import hashlib
+import os
+from PIL import Image
 
 gamelist = flask.Blueprint("gamelist", __name__, template_folder="templates")
 
@@ -78,6 +81,8 @@ def logout():
 @gamelist.route("/profile", endpoint="profile", methods=["GET"])
 def profile():
     """Send profile page"""
+    if "username" not in flask.session:
+        return flask.redirect(flask.url_for("gamelist.loginGet"))
     return flask.render_template("profile.html")
 
 
@@ -103,6 +108,34 @@ def game(game):
 def allGames():
     """Send the lists page"""
     return flask.render_template("lists.html")
+
+
+@gamelist.route("/images/profile/<username>.png", endpoint="pfpGet", methods=["GET"])
+def userProfilePicture(username):
+    """Get the profile picture of a user"""
+    usernameHash = hashlib.md5(username.lower().encode()).hexdigest()
+    file = f"{db.directory}/images/pfp/{usernameHash}.png"
+    if os.path.exists(file):
+        return flask.send_file(file)
+    return flask.redirect("/static/images/defaultPFP.png")
+
+
+@gamelist.route("/images/profile/upload", endpoint="pfpPost", methods=["POST"])
+def userProfilePicture():
+    """Upload the profile picture of a user"""
+    if "username" not in flask.session:
+        return {"success": False, "error": "You are not logged in."}, 401
+    username = flask.session["username"]
+    usernameHash = hashlib.md5(username.lower().encode()).hexdigest()
+    file = f"{db.directory}/images/pfp/{usernameHash}.png"
+    if "image" not in flask.request.files:
+        return {"success": False, "error": "No file was sent."}, 400
+    image = Image.open(flask.request.files["image"])
+    if image.width < 64 or image.height < 64:
+        return {"success": False, "error": "Image is too small."}, 400
+    image = image.resize((512, 512), Image.ANTIALIAS)
+    image.save(file, "PNG")
+    return {"success": True}
 
 
 if "__main__" == __name__:

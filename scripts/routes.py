@@ -42,13 +42,13 @@ def loginPost():
 
 
 @gamelist.route("/register", endpoint="registerGet", methods=["GET"])
-def register():
+def registerGet():
     """Send register page"""
     return flask.render_template("register.html")
 
 
 @gamelist.route("/register", endpoint="registerPost", methods=["POST"])
-def register():
+def registerPost():
     """User tries to register"""
     username = flask.request.form["username"]
     password = flask.request.form["password"]
@@ -139,10 +139,11 @@ def userProfilePicture():
 
 
 @gamelist.route("/game/add", endpoint="addGameGet", methods=["GET"])
-def addGame():
+def addGameGet():
     """Send the page for adding a new game"""
     genres = db.getGenres()
     publishers = db.getPublishers()
+
     return flask.render_template("addGame.html", genres=genres, genreCount=len(genres), publishers=publishers, publisherCount=len(publishers))
 
 
@@ -151,7 +152,35 @@ def addGame():
 
 
 @gamelist.route("/game/add", endpoint="addGamePost", methods=["POST"])
-def allGames():
+def addGamePost():
+    """Processes the new game form and adds game to the database"""
+    genres = db.getGenres()
+    publishers = db.getPublishers()
+
+    gameTitle = flask.request.form["gameName"]
+    desc = flask.request.form["desc"]
+    releaseDate = flask.request.form["releaseDate"]
+    gameGenres = flask.request.form["genres"]
+    publisher = flask.request.form["publishers"]
+
+    for value, validate in [
+        (gameTitle, db.validator.gameTitle),
+        (releaseDate, db.validator.releaseDate)
+    ]:
+        valid, message = validate(value)
+        if not valid:
+            return flask.render_template("addGame.html", error=message, 
+                genres=genres, genreCount=len(genres),
+                publishers=publishers, publisherCount=len(publishers),
+                gameName=gameTitle,  desc=desc, releaseDate=releaseDate)
+
+    db.addGame(gameTitle, desc, releaseDate, gameGenres, publisher)
+
+    return flask.redirect(flask.url_for("gamelist.allGames"))
+
+
+##@gamelist.route("/game/add", endpoint="addGamePost", methods=["POST"])
+##def allGames():
     """Add the game to the database"""
     ## todo: validate the data
     ## idk probably some more stuff

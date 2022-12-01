@@ -6,7 +6,12 @@
     <a href="/user">USERS</a>
     <a href="/games">GAMES</a>
     <a href="/lists">LISTS</a>
+    <a href="/game/add">ADD GAME</a>
     <a href="/profile">{{ session['username'] }}</a>
-    <a href="/logout">Log Out</a>
+    <a href="/logout">Log-Out</a>
+    {% else %}
+    <a href="/login">Log-In</a>
+    <a href="/register">Register</a>
     {% endif %}
+
 </nav>

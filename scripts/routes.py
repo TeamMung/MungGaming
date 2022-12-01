@@ -107,8 +107,8 @@ def game(game):
 @gamelist.route("/lists", endpoint="lists", methods=["GET"])
 def allGames():
     """Send the lists page"""
+    
     return flask.render_template("lists.html")
-
 
 @gamelist.route("/images/profile/<username>.png", endpoint="pfpGet", methods=["GET"])
 def userProfilePicture(username):
@@ -136,6 +136,30 @@ def userProfilePicture():
     image = image.resize((512, 512), Image.ANTIALIAS)
     image.save(file, "PNG")
     return {"success": True}
+
+
+@gamelist.route("/game/add", endpoint="addGameGet", methods=["GET"])
+def addGame():
+    """Send the page for adding a new game"""
+    genres = db.getGenres()
+    publishers = db.getPublishers()
+    return flask.render_template("addGame.html", genres=genres, genreCount=len(genres), publishers=publishers, publisherCount=len(publishers))
+
+
+# i changed it to localhost/game/add - try again maybe it was because it had uppercase in the url
+# also try installing the depenencies - maybe its because its not using waitress
+
+
+@gamelist.route("/game/add", endpoint="addGamePost", methods=["POST"])
+def allGames():
+    """Add the game to the database"""
+    ## todo: validate the data
+    ## idk probably some more stuff
+    ## dont need to validate the genres and publishers because they are from a dropdown and if a user manages to fuck that up somehow the database will just ignore it
+    ## theres no requirements for description so im not bothering with that
+    ## upload the image seperately like the pfp
+    ## game is currently always unapproved but i can add that later
+    return flask.render_template("addGame.html")
 
 
 if "__main__" == __name__:

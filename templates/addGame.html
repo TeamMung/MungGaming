@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Add Game</title>
+    {% include("head.html") %}
+</head>
+
+<body>
+    {% include("nav.html") %}
+    
+    <div class="formBox">
+        <form method="GET">
+            <h1>Add a game</h1>
+            <label for="gameName">Name</label><br>
+            <input type="text" placeholder="Game's name " id="gameName" name="gameName" {% if gameName %} value="{{ gameName }}" {% endif %}><br>
+            <label for="desc">Description</label><br>
+            <input type="text" placeholder="Description" id="desc" name="desc"><br>
+            <label for="releaseDate">Release date</label><br>
+            <input type="date" min="1960-01-01" max="2050-01-01" id="releaseDate" name="releaseDate" {% if releaseDate %} value="{{ releaseDate }}" {% endif %}><br>
+
+            <!--gonna just do comments for shit because i got lecture in a minute lmao i'm not coming in today to do this all day cause fuck lectures i'll do them at christmas-->
+            <!--ok lol        bruh theres no foreach, you have to do len cring skull emoji-->
+
+            <!--genres mung title-->
+            {%for i in range(0, genreCount)%}
+            <li>{{genres[i]}}</li>
+            {%endfor%}
+            <!-- can you test this works idk, gotta go to emili lecture now, ok; why isn't it returning the HTML? so mungy-->
+
+            <input type="submit" value="Request Game">
+        </form>
+    </div>
+</body>
+<!--we should use cammelCase for consistency ah ok, i usually don't use it for HTML but if we've already done it - ok we could use radio buttons for genre but we'd have to import the genre's and shit ookkkkk-->
+
+<!--that shouldnt be the problem, its just wed have a shit ton of them for stuff like publishers, the page will be really long
+but it is a prototype so yea its good enough-->
+</html>

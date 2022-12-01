@@ -70,6 +70,34 @@ class validator:
             return True, None
         return False, "Phone number is invalid"
 
+    def gameTitle(self, gameTitle):
+        """Check the game title is valid"""
+        print(len(gameTitle))
+        if len(gameTitle) > 64 or len(gameTitle) < 3:
+            print(" length fail")
+            return False, "Game title must be between 3 and 64 characters long"
+        if self.db.getGameByName(gameTitle):
+            return False, "Game already exists"
+        print(" success")
+        return True, None
+
+    def releaseDate(self, releaseDate):
+        """Check the release date is valid"""
+        print(releaseDate)
+        if re.match("^\d\d\d\d-\d\d-\d\d$", releaseDate):
+            try:
+                date = datetime.datetime.strptime(releaseDate, "%Y-%m-%d")
+                now = datetime.datetime.now()
+                ## if date is more than 1960-01-01
+                if date >= datetime.datetime(1960, 1, 1) and date <= now:
+                    return True, None
+                elif date > now:
+                    return False, "Release date must be in the past"
+            except ValueError:
+                pass
+        return False, "Release date must be in YYYY-MM-DD format"
+
+
 if __name__ == "__main__":
     import database
     database.database("../data/", validator)

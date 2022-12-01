@@ -147,10 +147,6 @@ def addGameGet():
     return flask.render_template("addGame.html", genres=genres, genreCount=len(genres), publishers=publishers, publisherCount=len(publishers))
 
 
-# i changed it to localhost/game/add - try again maybe it was because it had uppercase in the url
-# also try installing the depenencies - maybe its because its not using waitress
-
-
 @gamelist.route("/game/add", endpoint="addGamePost", methods=["POST"])
 def addGamePost():
     """Processes the new game form and adds game to the database"""
@@ -160,8 +156,8 @@ def addGamePost():
     gameTitle = flask.request.form["gameName"]
     desc = flask.request.form["desc"]
     releaseDate = flask.request.form["releaseDate"]
-    gameGenres = flask.request.form["genres"]
-    publisher = flask.request.form["publishers"]
+    selectedGenres = flask.request.form.getlist("genres")
+    selectedPublishers = flask.request.form.getlist("publishers")
 
     for value, validate in [
         (gameTitle, db.validator.gameTitle),
@@ -174,21 +170,9 @@ def addGamePost():
                 publishers=publishers, publisherCount=len(publishers),
                 gameName=gameTitle,  desc=desc, releaseDate=releaseDate)
 
-    db.addGame(gameTitle, desc, releaseDate, gameGenres, publisher)
+    db.addGame(gameTitle, desc, releaseDate, selectedGenres, selectedPublishers)
 
     return flask.redirect(flask.url_for("gamelist.allGames"))
-
-
-##@gamelist.route("/game/add", endpoint="addGamePost", methods=["POST"])
-##def allGames():
-    """Add the game to the database"""
-    ## todo: validate the data
-    ## idk probably some more stuff
-    ## dont need to validate the genres and publishers because they are from a dropdown and if a user manages to fuck that up somehow the database will just ignore it
-    ## theres no requirements for description so im not bothering with that
-    ## upload the image seperately like the pfp
-    ## game is currently always unapproved but i can add that later
-    return flask.render_template("addGame.html")
 
 
 if "__main__" == __name__:

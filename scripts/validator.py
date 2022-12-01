@@ -72,18 +72,14 @@ class validator:
 
     def gameTitle(self, gameTitle):
         """Check the game title is valid"""
-        print(len(gameTitle))
         if len(gameTitle) > 64 or len(gameTitle) < 3:
-            print(" length fail")
             return False, "Game title must be between 3 and 64 characters long"
         if self.db.getGameByName(gameTitle):
             return False, "Game already exists"
-        print(" success")
         return True, None
 
     def releaseDate(self, releaseDate):
         """Check the release date is valid"""
-        print(releaseDate)
         if re.match("^\d\d\d\d-\d\d-\d\d$", releaseDate):
             try:
                 date = datetime.datetime.strptime(releaseDate, "%Y-%m-%d")

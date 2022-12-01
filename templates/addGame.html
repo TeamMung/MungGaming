@@ -21,14 +21,14 @@
 
             <label for="genres">Genres:</label><br>
             {%for i in range(0, genreCount)%}
-            <input type="checkbox" id="{{genres[i]}}" value="{{genres[i]}}">
+            <input type="checkbox" name="genres" id="{{genres[i]}}" value="{{genres[i]}}">
             <label for="{{genres[i]}}">{{genres[i]}}</label><br>
             {%endfor%}
 
 
             <label for="publishers">Publishers:</label><br>
             {%for i in range(0, publisherCount)%}
-            <input type="checkbox" id="{{publishers[i]}}" value="{{publishers[i]}}">
+            <input type="checkbox" name="publishers" id="{{publishers[i]}}" value="{{publishers[i]}}">
             <label for="{{publishers[i]}}">{{publishers[i]}}</label><br>
             {%endfor%}
 

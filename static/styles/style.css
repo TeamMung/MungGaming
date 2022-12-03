@@ -43,3 +43,69 @@ h3{
     background-color: #081827;
     
 }
+#welcome {
+
+height: 25%;
+
+}
+
+#genre {
+    
+    height: 25%;
+}
+
+button {
+    background-color: #008CBA;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 13px;
+    margin: 4px 2px;
+    cursor: pointer;
+      
+  }
+
+.sideBar{
+
+    width: 350px; height: 800px; border: 1px solid black; margin: 0 auto;
+    float:right; 
+    background-color:#081827;
+}
+
+.formBox{
+    padding-top: 10px;
+    height: 75%; 
+    width: 100%;
+    text-align: center;
+
+}
+.error{
+
+    color:red;
+
+}
+#uploadProfilePicture{
+
+    height: 60%;
+    width: auto;
+
+}
+a {
+    color: cornflowerblue;
+}
+input {
+    width: 15%;
+    height: auto;
+}
+.submit{
+
+    width: 75px;
+    background-color:#081827;
+    border-color: cornflowerblue;
+    
+
+}
+

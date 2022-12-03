@@ -8,15 +8,14 @@
 
 <body>
     {% include("nav.html") %}
-    
+    <h1>Log-in</h1>
     <div class="formBox">
         <form method="POST">
-            <h1>Log-in</h1>
             <label for="username">Username</label><br>
-            <input type="text" placeholder="username" id="username" name="username"><br>
+            <input type="text" placeholder="Username" id="username" name="username"><br>
             <label for="password">Password</label><br>
-            <input type="password" placeholder="password" id="password" name="password"><br>
-            <input type="submit" value="Log-in">
+            <input type="password" placeholder="Password" id="password" name="password"><br>
+            <input class = "submit" type="submit" value="Log-in">
         </form>
     </div>
 </body>

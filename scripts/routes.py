@@ -165,17 +165,42 @@ def addGamePost():
     selectedPublishers = flask.request.form.getlist("publishers")
 
     for value, validate in [
-        (gameTitle, db.validator.gameTitle),
+        (gameTitle, db.validator.gameTitle), #need to figure out how this test is getting bypassed or passing everytime (might be an issue with my database)
         (releaseDate, db.validator.releaseDate)
     ]:
         valid, message = validate(value)
-        if not valid:
-            return flask.render_template("addGame.html", error=message, 
-                genres=genres, genreCount=len(genres),
-                publishers=publishers, publisherCount=len(publishers),
-                gameName=gameTitle,  desc=desc, releaseDate=releaseDate)
-
-    db.addGame(gameTitle, desc, releaseDate, selectedGenres, selectedPublishers)
+    if not flask.request.files["image"]:
+        message = "No file was sent."
+        valid = False
+    image = flask.request.files["image"] 
+    if image.filename == "":
+        message= "image has no name"
+        valid= False
+    imageRead = flask.request.files['image'].read()
+    size = len(imageRead)
+    if size > 6 * 1024 * 1024:
+        message= "image must be below 6MB"
+        valid= False
+    imageOpen = Image.open(image)
+    if imageOpen.height < 128 or imageOpen.width < 128:
+        message= "image is too small, must be over 128 pixels in width and height"
+        valid= False
+    if imageOpen.height > 4096 or imageOpen.width > 4096:
+        message= "image is too large, must be below 4096 pixels in width and height"
+        valid= False
+    extension = image.filename.rsplit(".", 1)[1]
+    if extension.lower() not in ["png", "jpg", "jpeg"]:
+        message= "image must be PNG or JPG"
+        valid= False
+    if not valid:
+        return flask.render_template("addGame.html", error=message, 
+            genres=genres, genreCount=len(genres),
+            publishers=publishers, publisherCount=len(publishers),
+            gameName=gameTitle,  desc=desc, releaseDate=releaseDate)
+    gameTitleHash = hashlib.md5(gameTitle.lower().encode()).hexdigest()
+    db.addGame(gameTitle, desc, releaseDate, selectedGenres, selectedPublishers, gameTitleHash + ".png")
+    image.seek(0)
+    image.save(os.path.join('static/images/gamePromo/', gameTitleHash + ".png"))
 
     return flask.redirect(flask.url_for("gamelist.allGames"))
 

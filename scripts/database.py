@@ -141,7 +141,7 @@ class database:
         con.commit()
         con.close()
 
-    def addGame(self, name, description, releaseDate, genres, publishers):
+    def addGame(self, name, description, releaseDate, genres, publishers, promoImage):
         """Add a game to the database.
         Will not add genres or publishers that do not already exist.
         
@@ -153,8 +153,8 @@ class database:
         publishers  -- an array of developers and publishers of the game"""
         con, cur = self.connect()
         cur.execute(
-            "INSERT INTO games (gameName, gameDescription, releaseDate, approved) VALUES (?, ?, ?, 0)",
-            (name, description, releaseDate))
+            "INSERT INTO games (gameName, gameDescription, releaseDate, approved, promoImage) VALUES (?, ?, ?, 0, ?)",
+            (name, description, releaseDate, promoImage))
         gameID = cur.lastrowid
         for genre in genres:
             cur.execute("SELECT genreID from gameGenres WHERE LOWER(genre) = ?", (genre.lower(),))
@@ -196,6 +196,7 @@ class database:
                 games.gameName, \
                 games.gameDescription, \
                 games.releaseDate, \
+                games.promoImage, \
                 GROUP_CONCAT(DISTINCT g.genre), \
                 GROUP_CONCAT(DISTINCT p.publisherName) \
             FROM games \
@@ -213,8 +214,9 @@ class database:
                 "name":         game[2],
                 "description":  game[3],
                 "releaseDate":  game[4],
-                "genres":       self.unConcat(game[5]),
-                "developers":   self.unConcat(game[6])
+                "promoImage":   game[5],
+                "genres":       self.unConcat(game[6]),
+                "developers":   self.unConcat(game[7])
             }
         return None
 
@@ -237,10 +239,10 @@ class database:
     def getAllGames(self):
         """Get an array of all game titles in the database."""
         con, cur = self.connect()
-        cur.execute("SELECT gameName FROM games")
+        cur.execute("SELECT gameName, promoImage FROM games")
         games = cur.fetchall()
         con.close()
-        return [game[0] for game in games]
+        return games
 
     def deleteGameByID(self, id):
         """Delete a game from the database by its name.

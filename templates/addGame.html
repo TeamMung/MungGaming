@@ -10,8 +10,10 @@
     {% include("nav.html") %}
     
     <div class="formBox">
-        <form method="POST">
+        <form method="POST" enctype = "multipart/form-data">
             <h1>Add a game</h1>
+            <p>Upload a promotional image of your game</p>
+            <input type="file" name="image" id="image">
             <label for="gameName">Name</label><br>
             <input type="text" placeholder="Game's name " id="gameName" name="gameName" {% if gameName %} value="{{ gameName }}" {% endif %}><br>
             <label for="desc">Description</label><br>

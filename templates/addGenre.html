@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Add Game</title>
+    {% include("head.html") %}
+</head>
+
+<body>
+    {% include("nav.html") %}
+
+    <div class="formBox">
+        <form method="POST">
+            <h1>Add a genre</h1>
+            <label for="genreName">Name</label><br>
+            <input type="text" id="genreName" name="genreName" {% if genreName %} value="{{genreName}}" {% endif %} required><br>
+            <input type="submit" value="Add Genre">
+        </form>
+    </div>
+
+    {% if error %}
+        <h1 class="error">{{ error }}</h1>
+    {% endif %}
+</body>
+
+</html>

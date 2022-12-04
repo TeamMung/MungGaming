@@ -9,9 +9,35 @@
 <body>
     {% include("nav.html") %}
     
-    <div id="welcome">
-        <h2>view specific game</h2>
-    </div>
+    <h1>{{ name }}</h1>
+
+    <h3>{{ releaseDate }}</h3>
+
+    {% if not approved %}
+        <p>Warning: This game has not been approved by a moderator yet</p>
+    {% endif %}
+
+    {% if genres %}
+        <h2>Genres</h2>
+        <ul>
+            {% for genre in genres %}
+                <li>{{ genre }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if developers %}
+        <h2>Developers & Publishers</h2>
+        <ul>
+            {% for developer in developers %}
+                <li>{{ developer }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <h2>Description</h2>
+
+    <p>{{ description }}</p>
 </body>
 
 </html>

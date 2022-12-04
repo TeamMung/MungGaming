@@ -9,9 +9,18 @@
 <body>
     {% include("nav.html") %}
 
-    <div id="welcome">
-        <h2> view all games</h2>
-    </div>
+    <ul>
+        {% for game in games %}
+            <li>
+                <a href="/game/{{ game }}">{{ game }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h2>Add game</h2>
+    <p><a href="/games/add">Add game</a></p>
+    <p><a href="/games/addGenre">Add genre</a></p>
+    <p><a href="/games/addPublisher">Add publiher or developer</a></p>
 </body>
 
 </html>

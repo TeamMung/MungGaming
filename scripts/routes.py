@@ -87,7 +87,7 @@ def profile():
 
 
 @gamelist.route("/user", endpoint="user", methods=["GET"])
-def profile():
+def user():
     """Send user page"""
     return flask.render_template("user.html")
 
@@ -95,17 +95,22 @@ def profile():
 @gamelist.route("/games", endpoint="allGames", methods=["GET"])
 def allGames():
     """Send all games page"""
-    return flask.render_template("allGames.html")
+    games = db.getAllGames()
+    return flask.render_template("allGames.html", games=games)
 
 
 @gamelist.route("/game/<game>", endpoint="game", methods=["GET"])
 def game(game):
     """Send a specific game page"""
-    return flask.render_template("game.html")
+    # url decode game
+    game = db.getGameByName(game)
+    if game is None:
+        return flask.render_template("error.html", title="404: Game not found", message="The game you are looking for does not exist."), 404
+    return flask.render_template("game.html", **game)
 
 
 @gamelist.route("/lists", endpoint="lists", methods=["GET"])
-def allGames():
+def lists():
     """Send the lists page"""
     
     return flask.render_template("lists.html")
@@ -138,7 +143,7 @@ def userProfilePicture():
     return {"success": True}
 
 
-@gamelist.route("/game/add", endpoint="addGameGet", methods=["GET"])
+@gamelist.route("/games/add", endpoint="addGameGet", methods=["GET"])
 def addGameGet():
     """Send the page for adding a new game"""
     genres = db.getGenres()
@@ -147,7 +152,7 @@ def addGameGet():
     return flask.render_template("addGame.html", genres=genres, genreCount=len(genres), publishers=publishers, publisherCount=len(publishers))
 
 
-@gamelist.route("/game/add", endpoint="addGamePost", methods=["POST"])
+@gamelist.route("/games/add", endpoint="addGamePost", methods=["POST"])
 def addGamePost():
     """Processes the new game form and adds game to the database"""
     genres = db.getGenres()
@@ -174,6 +179,38 @@ def addGamePost():
 
     return flask.redirect(flask.url_for("gamelist.allGames"))
 
+
+@gamelist.route("/games/addGenre", endpoint="genreAddGet", methods=["GET"])
+def genreAddGet():
+    """Send the page for adding a new genre"""
+    return flask.render_template("addGenre.html")
+
+
+@gamelist.route("/games/addGenre", endpoint="genreAddPost", methods=["POST"])
+def genreAddPost():
+    """Processes the new genre form and adds genre to the database"""
+    genreName = flask.request.form["genreName"]
+    if 3 <= len(genreName) < 32:
+        db.addGenre(genreName)
+        return flask.redirect(flask.url_for("gamelist.allGames"))
+    return flask.render_template("addGenre.html", error="Genre name must be between 3 and 32 characters long.", genreName=genreName)
+
+
+@gamelist.route("/games/addPublisher", endpoint="publisherAddGet", methods=["GET"])
+def publisherAddGet():
+    """Send the page for adding a new publisher"""
+    return flask.render_template("addPublisher.html")
+
+
+@gamelist.route("/games/addPublisher", endpoint="publisherAddPost", methods=["POST"])
+def publisherAddPost():
+    """Processes the new publisher form and adds publisher to the database"""
+    publisherName = flask.request.form["publisherName"]
+    if 3 <= len(publisherName) < 64:
+        db.addPublisher(publisherName)
+        return flask.redirect(flask.url_for("gamelist.allGames"))
+    return flask.render_template("addPublisher.html", error="Publisher name must be between 3 and 64 characters long.", publisherName=publisherName)
+    
 
 if "__main__" == __name__:
     import database

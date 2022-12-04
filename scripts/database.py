@@ -234,6 +234,14 @@ class database:
         gameID -- the ID of the game to get"""
         return self.getGame("games.gameID", gameID)
 
+    def getAllGames(self):
+        """Get an array of all game titles in the database."""
+        con, cur = self.connect()
+        cur.execute("SELECT gameName FROM games")
+        games = cur.fetchall()
+        con.close()
+        return [game[0] for game in games]
+
     def deleteGameByID(self, id):
         """Delete a game from the database by its name.
         

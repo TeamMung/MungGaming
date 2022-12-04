@@ -102,18 +102,18 @@ def allGames():
 @gamelist.route("/game/<game>", endpoint="game", methods=["GET"])
 def game(game):
     """Send a specific game page"""
-    # url decode game
+    gameTitleHash = hashlib.md5(game.lower().encode()).hexdigest()
     game = db.getGameByName(game)
     if game is None:
         return flask.render_template("error.html", title="404: Game not found", message="The game you are looking for does not exist."), 404
-    return flask.render_template("game.html", **game)
+    return flask.render_template("game.html", **game, gameTitleHash=gameTitleHash)
 
 
 @gamelist.route("/lists", endpoint="lists", methods=["GET"])
 def lists():
     """Send the lists page"""
-    
     return flask.render_template("lists.html")
+
 
 @gamelist.route("/images/profile/<username>.png", endpoint="pfpGet", methods=["GET"])
 def userProfilePicture(username):
@@ -148,7 +148,6 @@ def addGameGet():
     """Send the page for adding a new game"""
     genres = db.getGenres()
     publishers = db.getPublishers()
-
     return flask.render_template("addGame.html", genres=genres, genreCount=len(genres), publishers=publishers, publisherCount=len(publishers))
 
 
@@ -164,45 +163,58 @@ def addGamePost():
     selectedGenres = flask.request.form.getlist("genres")
     selectedPublishers = flask.request.form.getlist("publishers")
 
+    message = ""
+    valid = True
     for value, validate in [
-        (gameTitle, db.validator.gameTitle), #need to figure out how this test is getting bypassed or passing everytime (might be an issue with my database)
+        (gameTitle, db.validator.gameTitle),
         (releaseDate, db.validator.releaseDate)
     ]:
-        valid, message = validate(value)
-    if not flask.request.files["image"]:
-        message = "No file was sent."
+        validated = validate(value)
+        if not validated[0]:
+            valid = False
+            message += "\n" + validated[1]
+
+    if (not flask.request.files["image"]) or (not "." in flask.request.files["image"].filename):
+        message = "\nNo image was uploaded."
         valid = False
-    image = flask.request.files["image"] 
-    if image.filename == "":
-        message= "image has no name"
-        valid= False
-    imageRead = flask.request.files['image'].read()
-    size = len(imageRead)
-    if size > 6 * 1024 * 1024:
-        message= "image must be below 6MB"
-        valid= False
-    imageOpen = Image.open(image)
-    if imageOpen.height < 128 or imageOpen.width < 128:
-        message= "image is too small, must be over 128 pixels in width and height"
-        valid= False
-    if imageOpen.height > 4096 or imageOpen.width > 4096:
-        message= "image is too large, must be below 4096 pixels in width and height"
-        valid= False
-    extension = image.filename.rsplit(".", 1)[1]
-    if extension.lower() not in ["png", "jpg", "jpeg"]:
-        message= "image must be PNG or JPG"
-        valid= False
+    if valid:
+        image = flask.request.files["image"]
+        extension = image.filename.rsplit(".", 1)[1]
+        if extension.lower() not in ["png", "jpg", "jpeg"]:
+            valid = False
+            message += "\nimage must be PNG or JPG"
+    if valid:
+        imageRead = flask.request.files['image'].read()
+        size = len(imageRead)
+        if size > 6 * 1024 * 1024:
+            valid = False
+            message += "\nimage must be below 6MB"
+        imageOpen = Image.open(image)
+        if imageOpen.height < 128 or imageOpen.width < 128:
+            valid = False
+            message += "\nimage is too small, must be over 128 pixels in width and height"
+        if imageOpen.height > 4096 or imageOpen.width > 4096:
+            valid = False
+            message += "\nimage is too large, must be below 4096 pixels in width and height"
     if not valid:
         return flask.render_template("addGame.html", error=message, 
             genres=genres, genreCount=len(genres),
             publishers=publishers, publisherCount=len(publishers),
             gameName=gameTitle,  desc=desc, releaseDate=releaseDate)
     gameTitleHash = hashlib.md5(gameTitle.lower().encode()).hexdigest()
-    db.addGame(gameTitle, desc, releaseDate, selectedGenres, selectedPublishers, gameTitleHash + ".png")
-    image.seek(0)
-    image.save(os.path.join('static/images/gamePromo/', gameTitleHash + ".png"))
-
+    db.addGame(gameTitle, desc, releaseDate, selectedGenres, selectedPublishers)
+    file = f"{db.directory}/images/promo/{gameTitleHash}.png"
+    imageOpen.save(file, "PNG")
     return flask.redirect(flask.url_for("gamelist.allGames"))
+
+
+@gamelist.route("/images/promo/<gameTitleHash>.png", endpoint="promoGet", methods=["GET"])
+def userProfilePicture(gameTitleHash):
+    """Get the profile picture of a user"""
+    file = f"{db.directory}/images/promo/{gameTitleHash}.png"
+    if os.path.exists(file):
+        return flask.send_file(file)
+    return flask.send_file("static/images/defaultPromo.png"), 404
 
 
 @gamelist.route("/games/addGenre", endpoint="genreAddGet", methods=["GET"])

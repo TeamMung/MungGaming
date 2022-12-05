@@ -70,18 +70,23 @@ button {
 
 .sideBar{
 
-    width: 350px; height: 800px; border: 1px solid black; margin: 0 auto;
+    width: 350px; 
+    height: 800px; 
+    border: 1px solid black; 
+    margin: 0 auto;
     float:right; 
     background-color:#081827;
 }
 
+
 .formBox{
     padding-top: 10px;
-    height: 75%; 
+    height: 100%; 
     width: 100%;
     text-align: center;
-
 }
+
+
 .error{
 
     color:red;
@@ -96,16 +101,49 @@ button {
 a {
     color: cornflowerblue;
 }
+
+.gameAdd{
+
+    border-color:cornflowerblue;
+
+}
+
+p {
+ font-size: large;
+ text-align:center;
+}
+
 input {
     width: 15%;
     height: auto;
+
 }
+.genreCreate{
+    
+    text-align:left;
+    margin-right:0px;
+}
+
+input[type=checkbox]{
+
+    text-align:left;
+
+
+}
+
+#checkboxDiv{
+    
+    width: 300px;
+    margin:auto;
+}
+
+
 .submit{
 
     width: 75px;
     background-color:#081827;
     border-color: cornflowerblue;
-    
-
 }
+
+
 

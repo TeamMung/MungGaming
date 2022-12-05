@@ -12,8 +12,7 @@
     <div class="formBox">
         <form method="POST" enctype = "multipart/form-data">
             <h1>Add a game</h1>
-            <p>Upload a promotional image of your game</p>
-            <input type="file" name="image" id="image">
+            
             <label for="gameName">Name</label><br>
             <input type="text" placeholder="Game's name " id="gameName" name="gameName" {% if gameName %} value="{{ gameName }}" {% endif %}><br>
             <label for="desc">Description</label><br>
@@ -21,21 +20,29 @@
             <label for="releaseDate">Release date</label><br>
             <input type="date" min="1960-01-01" max="2050-01-01" id="releaseDate" name="releaseDate" {% if releaseDate %} value="{{ releaseDate }}" {% endif %}><br>
 
+
             <label for="genres">Genres:</label><br>
             {%for i in range(0, genreCount)%}
-            <input type="checkbox" name="genres" id="{{genres[i]}}" value="{{genres[i]}}">
+
+            
+            <div id="checkboxDiv">
+            <input type="checkbox" class = "genreCreate" name="genres" id="{{genres[i]}}" value="{{genres[i]}}">
             <label for="{{genres[i]}}">{{genres[i]}}</label><br>
             {%endfor%}
-
+            <br>
+            </div>
 
             <label for="publishers">Publishers:</label><br>
             {%for i in range(0, publisherCount)%}
+            <br>
             <input type="checkbox" name="publishers" id="{{publishers[i]}}" value="{{publishers[i]}}">
             <label for="{{publishers[i]}}">{{publishers[i]}}</label><br>
             {%endfor%}
-
-     
-
+            <br>
+            <label for="image">Upload a promotional image of your game</label><br>
+            <br>
+            <input type="file" name="image" id="image"><br>
+            <br>
             <input type="submit" value="Request Game">
         </form>
     </div>

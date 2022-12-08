@@ -13,9 +13,10 @@ class validatorTests(baseTests):
 
     dateYearsAgo = lambda self, years: (datetime.date.today() - datetime.timedelta(days=years*365.25)).strftime("%Y-%m-%d")
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(self):
         """Set up the validator tests"""
-        super().setUp()
+        super().setUpClass()
         self.db = database(self.tempDataDir, validator)
         self.validator = self.db.validator
 
@@ -45,8 +46,9 @@ class validatorTests(baseTests):
 class usernameTests(validatorTests):
     """Test the username method"""
 
-    def setUp(self):
-        super().setUp()
+    @classmethod
+    def setUpClass(self):
+        super().setUpClass()
         self.db.executeScript("databaseStructure.sql")
         self.method = self.validator.username
     
@@ -77,8 +79,9 @@ class usernameTests(validatorTests):
 class passwordTests(validatorTests):
     """Test the password validator method"""
 
-    def setUp(self):
-        super().setUp()
+    @classmethod
+    def setUpClass(self):
+        super().setUpClass()
         self.method = self.validator.password
 
     def testLength(self):
@@ -96,8 +99,9 @@ class passwordTests(validatorTests):
 class emailTests(validatorTests):
     """Test the email validator method"""
 
-    def setUp(self):
-        super().setUp()
+    @classmethod
+    def setUpClass(self):
+        super().setUpClass()
         self.db.executeScript("databaseStructure.sql")
         self.method = self.validator.email
 
@@ -118,8 +122,9 @@ class emailTests(validatorTests):
 class dateOfBirthTests(validatorTests):
     """Test the date of birth validator method"""
 
-    def setUp(self):
-        super().setUp()
+    @classmethod
+    def setUpClass(self):
+        super().setUpClass()
         self.method = self.validator.dateOfBirth
 
     def testValidFormat(self):
@@ -145,8 +150,9 @@ class dateOfBirthTests(validatorTests):
 class phoneNumberTests(validatorTests):
     """Test the phone number validator method"""
 
-    def setUp(self):
-        super().setUp()
+    @classmethod
+    def setUpClass(self):
+        super().setUpClass()
         self.method = self.validator.phoneNumber
 
     def testLocal(self):
@@ -165,8 +171,9 @@ class phoneNumberTests(validatorTests):
 class gameTitleTests(validatorTests):
     """Test the game title validator method"""
 
-    def setUp(self):
-        super().setUp()
+    @classmethod
+    def setUpClass(self):
+        super().setUpClass()
         self.db.executeScript("databaseStructure.sql")
         self.method = self.validator.gameTitle
     
@@ -185,8 +192,9 @@ class gameTitleTests(validatorTests):
 class releaseDateTests(validatorTests):
     """Test the release date validator method"""
 
-    def setUp(self):
-        super().setUp()
+    @classmethod
+    def setUpClass(self):
+        super().setUpClass()
         self.method = self.validator.releaseDate
 
     def testValidFormat(self):

@@ -7,8 +7,10 @@ from testing.utils import baseTests
 import unittest
 
 class databaseTests(baseTests):
-    def setUp(self):
-        super().setUp()
+
+    @classmethod
+    def setUpClass(self):
+        super().setUpClass()
         self.db = database(self.tempDataDir, validator)
         self.db.executeScript("databaseStructure.sql")
 
@@ -20,9 +22,11 @@ class structureTests(databaseTests):
             self.assertIn((tablename,), tables)
 
 class userTests(databaseTests):
-    def setUp(self):
+
+    @classmethod
+    def setUpClass(self):
         """Add user to test with."""
-        super().setUp()
+        super().setUpClass()
         self.db.addUser("TestUser", "Pa55word!", "TestEmail@example.com",
                         "2003-07-23", "07777777777")
 
@@ -89,6 +93,10 @@ class gameTests(databaseTests):
         }, getGame)
         self.assertEqual(self.db.getGameByID(getGame["gameID"]), getGame)
         self.db.deleteGameByID(getGame["gameID"])
+        self.db.deleteGenre("Adventure")
+        self.db.deleteGenre("Indie")
+        self.db.deletePublisher("Infinite Fall")
+        self.db.deletePublisher("Finji")
         self.assertIsNone(self.db.getGameByName(self.game[0]))
     
     def adGetDeleteTest(self, values, add, delete, get):

@@ -2,9 +2,12 @@ import random
 import os
 import shutil
 import unittest
+import warnings
 
 class baseTests(unittest.TestCase):
-    def setUp(self):
+
+    @classmethod
+    def setUpClass(self):
         """Create temporary directory."""
         tempDataDir = "TeamMungTesting" + str(random.randint(10**7,10**8-1))
 
@@ -13,7 +16,9 @@ class baseTests(unittest.TestCase):
         else:
             self.tempDataDir = "./" + tempDataDir + "/"
         os.makedirs(self.tempDataDir, exist_ok=True)
+        warnings.filterwarnings("ignore", category=Warning)
 
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(self):
         """Remove temporary directory for each set of tests."""
         shutil.rmtree(self.tempDataDir)
